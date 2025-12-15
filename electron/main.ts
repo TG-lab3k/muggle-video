@@ -4,7 +4,6 @@ import {
 
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 dotenv.config();
 function createWindow() {
@@ -18,17 +17,11 @@ function createWindow() {
         }
     });
 
-    //win.loadFile('index.html');
     if (process.env.NODE_ENV === 'development') {
         win.loadURL('http://localhost:5173')
         //win.webContents.openDevTools()
     } else {
-        //win.loadFile(path.join(__dirname, '../dist/index.html'))
-        //win.loadFile('index.html');
-        const indexHtmlPath = path.join(__dirname, '../dist/index.html');
-        //使用 fileURLToPath 确保路径格式正确，尤其是在 Windows 上
-        win.loadFile(fileURLToPath(indexHtmlPath));
-        //win.loadFile(indexHtmlPath);
+        win.loadFile(path.join(__dirname, '../dist/index.html'))
     }
 }
 
