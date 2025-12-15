@@ -2,22 +2,60 @@
   "name": "muggle-video",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "main": "main.ts",
+  "main": "electron/main.ts",
   "scripts": {
-    "dev": "concurrently \"npm:vite\" \"npm:electron-dev\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"npm:vite\" \"npm:electron-dev\"",
     "vite": "vite",
     "electron-dev": "wait-on http://localhost:5173 && electron . --no-sandbox",
-    "build": "vite build && electron-builder",
-    "build:win": "vite build && electron-builder --win",
-    "build:mac": "vite build && electron-builder --mac",
-    "build:linux": "vite build && electron-builder --linux"
+    "build": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.node.json && electron-builder",
+    "build:win": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.node.json && electron-builder --win",
+    "build:mac": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.node.json && electron-builder --mac",
+    "build:linux": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.node.json && electron-builder --linux",
+    "clear": "rimraf dist && rimraf dist-electron && rimraf release"
   },
+  "build": {
+    "appId": "com.qianting.muggle",
+    "productName": "Muggle Video",
+    "directories": {
+      "output": "release"
+    },
+    "extraMetadata": {
+      "main": "dist-electron/main.js"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "public/logo.png"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "public/logo.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "asar": true
+  },
+  "postinstall": "electron-builder install-app-deps",
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.1.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "lucide-react": "^0.561.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -31,6 +69,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
     "electron": "39.2.6",
     "electron-builder": "^26.0.12",
     "eslint": "^9.39.1",
